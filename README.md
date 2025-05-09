@@ -1,1 +1,1 @@
-# simple basic structure portfolio 
+# simple basic structure of portfolio 
