@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Inspiration - Quotes</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>Daily Inspiration</h1>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+                <i class="fas fa-moon"></i>
+            </button>
+        </header>
+
+        <main class="quote-container" id="quoteContainer">
+            <div class="quote-mark">"</div>
+            <div class="quote-text" id="quoteText">Loading your daily inspiration...</div>
+            <div class="quote-author" id="quoteAuthor">Just a moment</div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" id="newQuoteBtn">
+                    <i class="fas fa-refresh"></i>
+                    New Quote
+                </button>
+                <a class="btn" id="shareBtn" href="#" target="_blank" rel="noopener">
+                    <i class="fab fa-twitter"></i>
+                    Share
+                </a>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>✨ Find inspiration in every moment ✨</p>
+        </footer>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
