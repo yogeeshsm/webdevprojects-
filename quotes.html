@@ -6,27 +6,123 @@
     <title>Daily Inspiration - Quotes</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Quick responsive and theme styles for demo */
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: var(--bg, #f5f6fa);
+            color: var(--text, #222);
+            transition: background 0.3s, color 0.3s;
+        }
+        .dark-theme {
+            --bg: #181825;
+            --text: #f5f6fa;
+        }
+        .container {
+            max-width: 500px;
+            margin: 2rem auto;
+            background: var(--bg, #fff);
+            border-radius: 1rem;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.09);
+            padding: 2rem;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .theme-toggle {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text, #222);
+        }
+        .quote-container {
+            margin: 2rem 0;
+            text-align: center;
+            min-height: 160px;
+            position: relative;
+        }
+        .quote-mark {
+            font-size: 2rem;
+            color: #7f8fa6;
+        }
+        .quote-text {
+            font-size: 1.4rem;
+            margin: 1rem 0;
+            transition: opacity 0.4s;
+        }
+        .quote-author {
+            font-size: 1.1rem;
+            color: #718093;
+            margin-bottom: 1.5rem;
+        }
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+        .btn {
+            background: #e1b12c;
+            color: #fff;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.6rem 1.2rem;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .btn:focus {
+            outline: 2px solid #487eb0;
+        }
+        .btn-primary {
+            background: #487eb0;
+        }
+        .btn-copy {
+            background: #44bd32;
+        }
+        .footer {
+            text-align: center;
+            color: #718093;
+            font-size: 1rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 600px) {
+            .container { padding: 1rem; }
+            .quote-text { font-size: 1.1rem; }
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" role="main">
         <header class="header">
             <h1>Daily Inspiration</h1>
-            <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-                <i class="fas fa-moon"></i>
+            <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark or light theme">
+                <i class="fas fa-moon" id="themeIcon"></i>
             </button>
         </header>
 
-        <main class="quote-container" id="quoteContainer">
-            <div class="quote-mark">"</div>
+        <main class="quote-container" id="quoteContainer" aria-live="polite">
+            <div class="quote-mark" aria-hidden="true">"</div>
             <div class="quote-text" id="quoteText">Loading your daily inspiration...</div>
             <div class="quote-author" id="quoteAuthor">Just a moment</div>
             
             <div class="controls">
-                <button class="btn btn-primary" id="newQuoteBtn">
-                    <i class="fas fa-refresh"></i>
+                <button class="btn btn-primary" id="newQuoteBtn" aria-label="Get a new quote">
+                    <i class="fas fa-sync-alt"></i>
                     New Quote
                 </button>
-                <a class="btn" id="shareBtn" href="#" target="_blank" rel="noopener">
+                <button class="btn btn-copy" id="copyBtn" aria-label="Copy quote to clipboard">
+                    <i class="fas fa-copy"></i>
+                    Copy
+                </button>
+                <a class="btn" id="shareBtn" href="#" target="_blank" rel="noopener" aria-label="Share on Twitter">
                     <i class="fab fa-twitter"></i>
                     Share
                 </a>
@@ -38,6 +134,80 @@
         </footer>
     </div>
 
-    <script src="script.js"></script>
+    <script>
+    // Theme toggle with icon swap
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = document.getElementById('themeIcon');
+    themeToggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark-theme');
+        if(document.body.classList.contains('dark-theme')) {
+            themeIcon.classList.remove('fa-moon');
+            themeIcon.classList.add('fa-sun');
+        } else {
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
+        }
+    });
+
+    // Quote logic (replace with your own API or array)
+    const quotes = [
+        { text: "The best way to get started is to quit talking and begin doing.", author: "Walt Disney" },
+        { text: "Don't let yesterday take up too much of today.", author: "Will Rogers" },
+        { text: "It's not whether you get knocked down, it's whether you get up.", author: "Vince Lombardi" },
+        { text: "If you are working on something exciting, it will keep you motivated.", author: "Steve Jobs" }
+    ];
+
+    const quoteText = document.getElementById('quoteText');
+    const quoteAuthor = document.getElementById('quoteAuthor');
+    const newQuoteBtn = document.getElementById('newQuoteBtn');
+    const shareBtn = document.getElementById('shareBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    let currentQuote = {};
+
+    function showQuote(q) {
+        quoteText.style.opacity = 0;
+        quoteAuthor.style.opacity = 0;
+        setTimeout(() => {
+            quoteText.textContent = q.text;
+            quoteAuthor.textContent = `— ${q.author}`;
+            quoteText.style.opacity = 1;
+            quoteAuthor.style.opacity = 1;
+        }, 300);
+        shareBtn.href = `https://twitter.com/intent/tweet?text=${encodeURIComponent(`"${q.text}" — ${q.author}`)}`;
+        currentQuote = q;
+    }
+
+    function getRandomQuote() {
+        return quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    newQuoteBtn.addEventListener('click', () => {
+        showQuote(getRandomQuote());
+    });
+
+    // Copy to clipboard
+    copyBtn.addEventListener('click', () => {
+        const textToCopy = `"${currentQuote.text}" — ${currentQuote.author}`;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            copyBtn.textContent = "Copied!";
+            setTimeout(() => {
+                copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copy';
+            }, 1200);
+        });
+    });
+
+    // Keyboard navigation
+    newQuoteBtn.addEventListener('keyup', (e) => {
+        if (e.key === "Enter" || e.key === " ") newQuoteBtn.click();
+    });
+    copyBtn.addEventListener('keyup', (e) => {
+        if (e.key === "Enter" || e.key === " ") copyBtn.click();
+    });
+
+    // Initial load
+    window.addEventListener('DOMContentLoaded', () => {
+        showQuote(getRandomQuote());
+    });
+    </script>
 </body>
 </html>
